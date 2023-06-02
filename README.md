@@ -1,5 +1,5 @@
 
-# Welcome to your Root Account Use Alarm CDK Python project!
+# Welcome to the Root Account Use Alarm CDK Python project!
 
 1. RootAccountUseAlarm deploys an EventsBridge alarm.
 - Use if you already have a CloudTrail enabled that you want to use
