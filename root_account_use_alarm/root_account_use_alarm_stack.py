@@ -1,10 +1,12 @@
 from aws_cdk import (
     Stack,
+    CfnParameter,
+    aws_cloudtrail as ct,
+    aws_s3 as _s3,
+    aws_sns as _sns,
     aws_events as events,
     aws_events_targets as event_target,
-    aws_sns as _sns,
-    aws_sns_subscriptions as sns_sub,
-    CfnParameter
+    aws_sns_subscriptions as sns_sub
 )
 from constructs import Construct
 
@@ -14,18 +16,45 @@ from constructs import Construct
 
 class RootAccountUseAlarmStack(Stack):
 
-    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
+    def __init__(self, scope: Construct, construct_id: str, with_ct: bool, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # Define an event rule
-        rule = events.Rule(
-            self,
-            "root-account-use-alarm",
-            rule_name="root-account-use-alarm"
-        )
+        if with_ct:
+            ct_bucket=_s3.Bucket(self, "ct_bucket",
+                block_public_access=_s3.BlockPublicAccess.BLOCK_ALL,
+                encryption=_s3.BucketEncryption.UNENCRYPTED
+            )
+
+            # Define a trail
+            trail = ct.Trail(
+                self,
+                "root_account_use_alarm_with_cloudtrail-trail",
+                bucket=ct_bucket,
+                send_to_cloud_watch_logs=False,
+                enable_file_validation=False,
+                include_global_service_events=False,
+                is_multi_region_trail=False,
+                is_organization_trail=False, # organizational trail is failing; https://github.com/aws/aws-cdk/issues/22267
+                management_events=ct.ReadWriteType.WRITE_ONLY
+            )
+
+            event_rule=ct.Trail.on_event(
+                self,
+                "root-account-use-alarm-cloudtrail",
+                rule_name="root-account-use-alarm-cloudtrail",
+            )
+
+        else:
+
+            # Define an event rule
+            event_rule = events.Rule(
+                self,
+                "root-account-use-alarm",
+                rule_name="root-account-use-alarm"
+            )
 
         # Define the event pattern to look for
-        rule.add_event_pattern(
+        event_rule.add_event_pattern(
             detail_type=["AWS Console Sign In via CloudTrail"],
             detail={
                 "userIdentity": {
@@ -59,4 +88,4 @@ class RootAccountUseAlarmStack(Stack):
                 f"Root account login detected for account {events.EventField.from_path('$.detail.userIdentity.accountId')}"
             )
         )
-        rule.add_target(rule_target)
+        event_rule.add_target(rule_target)

@@ -12,14 +12,15 @@ app = cdk.App()
 RootAccountUseAlarmStack(
     app,
     "RootAccountUseAlarmStack",
+    with_ct=False,
     env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
     )
 
-RootAccountUseAlarmCloudTrailStack(
-    app,
-    "RootAccountUseAlarmCloudTrailStack",
-    env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
-)
+# RootAccountUseAlarmCloudTrailStack(
+#     app,
+#     "RootAccountUseAlarmCloudTrailStack",
+#     env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
+# )
 
 # CloudTrailOnlyStack(
 #     app,
