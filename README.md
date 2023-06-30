@@ -4,7 +4,7 @@
 1. RootAccountUseAlarm deploys an EventsBridge alarm.
 - Use if you already have a CloudTrail enabled that you want to use
 
-2. RootAccountUseAlarmCloudTrail also creates a CloudTrail trail
+2. RootAccountUseAlarmWithCloudTrailStack also creates a CloudTrail trail
 
 To manually create a virtualenv on MacOS and Linux:
 
@@ -37,16 +37,14 @@ At this point you can now synthesize the CloudFormation template for this code.
 $ cdk synth
 ```
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
+Deploy one of the stacks, with or without CloudTrail trail. Pass an email address that will be used for notifications.
 
-## Useful commands
+```
+$ cdk deploy RootAccountUseAlarmWithCloudTrailStack --parameters email=<email>  --profile <profile>
+```
 
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
+or
 
-Enjoy!
+```
+$ cdk deploy RootAccountUseAlarmStack --parameters email=<email>  --profile <profile>
+```

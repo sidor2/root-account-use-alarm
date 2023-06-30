@@ -16,11 +16,11 @@ from constructs import Construct
 
 class RootAccountUseAlarmStack(Stack):
 
-    def __init__(self, scope: Construct, construct_id: str, with_ct: bool, **kwargs) -> None:
+    def __init__(self, scope: Construct, construct_id: str, with_cloudtrail: bool, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        if with_ct:
-            ct_bucket=_s3.Bucket(self, "ct_bucket",
+        if with_cloudtrail:
+            ct_bucket=_s3.Bucket(self, "ct_bucket-",
                 block_public_access=_s3.BlockPublicAccess.BLOCK_ALL,
                 encryption=_s3.BucketEncryption.UNENCRYPTED
             )
@@ -28,7 +28,7 @@ class RootAccountUseAlarmStack(Stack):
             # Define a trail
             trail = ct.Trail(
                 self,
-                "root_account_use_alarm_with_cloudtrail-trail",
+                "root_account_use_alarm_with_cloudtrail-trail-",
                 bucket=ct_bucket,
                 send_to_cloud_watch_logs=False,
                 enable_file_validation=False,
@@ -40,8 +40,8 @@ class RootAccountUseAlarmStack(Stack):
 
             event_rule=ct.Trail.on_event(
                 self,
-                "root-account-use-alarm-cloudtrail",
-                rule_name="root-account-use-alarm-cloudtrail",
+                "root-account-use-alarm-cloudtrail-",
+                rule_name="root-account-use-alarm-cloudtrail-",
             )
 
         else:
@@ -49,8 +49,8 @@ class RootAccountUseAlarmStack(Stack):
             # Define an event rule
             event_rule = events.Rule(
                 self,
-                "root-account-use-alarm",
-                rule_name="root-account-use-alarm"
+                "root-account-use-alarm-",
+                rule_name="root-account-use-alarm-"
             )
 
         # Define the event pattern to look for
@@ -66,14 +66,14 @@ class RootAccountUseAlarmStack(Stack):
         # create an SNS topic
         alarm_topic = _sns.Topic(
             self,
-            "root-alarm-topic",
-            display_name="root-alarm-topic"
+            "root-alarm-topic-",
+            display_name="root-alarm-topic-"
         )
 
         # parameter for email subscription
         email_address = CfnParameter(
             self,
-            "emailparam",
+            "email",
             allowed_pattern="^[\\x20-\\x45]?[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$"
         )
 
