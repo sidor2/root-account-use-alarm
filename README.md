@@ -1,10 +1,10 @@
 
 # Welcome to the Root Account Use Alarm CDK Python project!
 
-1. RootAccountUseAlarm deploys an EventsBridge alarm.
+1. `RootAccountUseAlarm` deploys an EventsBridge alarm.
 - Use if you already have a CloudTrail enabled that you want to use
 
-2. RootAccountUseAlarmWithCloudTrailStack also creates a CloudTrail trail
+2. `RootAccountUseAlarmWithCloudTrailStack` also creates a CloudTrail trail
 
 To manually create a virtualenv on MacOS and Linux:
 
