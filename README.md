@@ -1,76 +1,91 @@
 # AWS CDK Root Account Use Alarm
 
-This AWS CDK stack sets up an Amazon EventBridge alarm to detect root account logins and sends a notification through Amazon SNS when such logins are detected. There are two variations of the stack available:
+A serverless AWS CDK stack that sets up an Amazon EventBridge alarm to detect root account logins and sends notifications via Amazon SNS, with optional CloudTrail integration for monitoring.
 
-`RootAccountUseAlarmStack`: This stack deploys an EventBridge alarm. Use this if you already have CloudTrail enabled and want to use an existing trail.
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org)
+[![AWS CDK](https://img.shields.io/badge/AWS_CDK-v2-orange)](https://aws.amazon.com/cdk/)
 
-`RootAccountUseAlarmWithCloudTrailStack`: This stack also creates an AWS CloudTrail trail for management events related to the root account. Use this if you don't have an existing trail or want to create a dedicated trail for root account management events.
+## Overview
+
+This project provides two CDK stack variations to monitor root account usage:
+- **`RootAccountUseAlarmStack`**: Deploys an EventBridge alarm using an existing CloudTrail trail.
+- **`RootAccountUseAlarmWithCloudTrailStack`**: Includes a dedicated CloudTrail trail for root account management events alongside the alarm.
+
+Notifications are sent via Amazon SNS when root account logins are detected, enhancing account security.
+
+![Thumbnail - AWS CDK Root Account Use Alarm](./thumbnail.png "AWS CDK Root Account Use Alarm Diagram")
+
+## Table of Contents
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Deployment](#deployment)
+- [Cleanup](#cleanup)
+- [Additional Resources](#additional-resources)
+
+## Features
+- **Root Account Monitoring**: Detects root account logins using Amazon EventBridge.
+- **Flexible Deployment**: Supports existing CloudTrail trails or creates a new one.
+- **Notification System**: Sends alerts via Amazon SNS.
+- **CDK-Based**: Infrastructure defined and deployed using AWS Cloud Development Kit (CDK).
+- **Security Focused**: Helps enforce best practices by alerting on unauthorized root usage.
 
 ## Prerequisites
+- **AWS CLI**: Installed and configured with appropriate credentials.
+- **Node.js**: Required for AWS CDK (version 14 or higher recommended).
+- **Python**: Version 3.8 or higher (for virtual environment setup).
+- **AWS Account**: With permissions to create EventBridge rules, CloudTrail trails, and SNS topics.
 
-Before deploying this stack, you need the following prerequisites:
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/username/repo.git
+   cd aws-cdk-root-account-use-alarm
+   ```
+2. Create and activate a virtual environment:
+   - **MacOS/Linux**:
+     ```bash
+     python3 -m venv .venv
+     source .venv/bin/activate
+     ```
+   - **Windows**:
+     ```bash
+     py -3 -m venv .venv
+     .venv\Scripts\activate.bat
+     ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-1. AWS CLI installed and configured with appropriate credentials.
-2. Node.js installed, as the AWS CDK is built on Node.js.
-3. Python 3 installed (for creating a virtual environment).
+## Deployment
+1. Synthesize the CloudFormation template:
+   ```bash
+   cdk synth
+   ```
+2. Deploy one of the following stacks based on your needs:
+   - **Option 1: With CloudTrail Trail** (if no existing trail or want a dedicated one):
+     ```bash
+     cdk deploy RootAccountUseAlarmWithCloudTrailStack --parameters email=<your-email> --profile <your-profile>
+     ```
+   - **Option 2: With Existing Trail**:
+     ```bash
+     cdk deploy RootAccountUseAlarmStack --parameters email=<your-email> --profile <your-profile>
+     ```
+   - **Notes**:
+     - Replace `<your-email>` with the email address to receive SNS notifications.
+     - Replace `<your-profile>` with your AWS CLI profile name.
 
-## Virtual Environment Setup
-
-Create a virtual environment for the project inside the main directory. On macOS and Linux, use the following command:
+## Cleanup
+To remove the stack and its resources from your AWS account:
 ```bash
-python3 -m venv .venv
+cdk destroy --profile <your-profile>
 ```
+- Replace `<your-profile>` with your AWS CLI profile name.
+- This command deletes all resources created by the deployed stack.
 
-On Windows, use the following command:
-```bash
-py -3 -m venv .venv
-```
-
-Activate the virtual environment. On macOS and Linux, use the following command:
-```bash
-source .venv/bin/activate
-```
-
-On Windows, use the following command:
-```bash
-.venv\Scripts\activate.bat
-```
-
-## Install Dependencies
-Install the dependencies for the project:
-```bash
-pip install -r requirements.txt
-```
-
-## CloudFormation Template Synthesis
-After activating the virtual environment, synthesize the CloudFormation template for this code:
-```bash
-cdk synth
-```
-
-## Deployment Steps
-Choose one of the following stacks to deploy, depending on whether you have an existing CloudTrail trail or want to create a new one:
-Option 1: Deploying RootAccountUseAlarmWithCloudTrailStack (with CloudTrail trail)
-```bash
-cdk deploy RootAccountUseAlarmWithCloudTrailStack --parameters email=<email> --profile <profile>
-```
-
-Option 2: Deploying RootAccountUseAlarmStack (without CloudTrail trail)
-```bash
-cdk deploy RootAccountUseAlarmStack --parameters email=<email> --profile <profile>
-```
-
-## Clean Up
-To remove the stack and its resources from your AWS account, use the following command:
-
-```bash
-cdk destroy --profile <profile>
-```
-This command will delete all the resources created by the stack.
-
-## Additional Information
-
-- AWS CDK documentation: https://docs.aws.amazon.com/cdk/latest/guide/home.html
-- AWS CloudTrail documentation: https://aws.amazon.com/cloudtrail/
-- Amazon SNS documentation: https://aws.amazon.com/sns/
-- Amazon EventBridge documentation: https://aws.amazon.com/eventbridge/
+## Additional Resources
+- [AWS CDK Documentation](https://docs.aws.amazon.com/cdk/latest/guide/home.html)
+- [AWS CloudTrail Documentation](https://aws.amazon.com/cloudtrail/)
+- [Amazon SNS Documentation](https://aws.amazon.com/sns/)
+- [Amazon EventBridge Documentation](https://aws.amazon.com/eventbridge/)
